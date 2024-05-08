@@ -4,7 +4,9 @@ export type InstructorType = {
   name: string;
   email: string;
   role: string;
+  password: string;
   courses: [];
+  id?: string
 };
 
 const instructorSchema = new mongoose.Schema<InstructorType>(
@@ -22,6 +24,11 @@ const instructorSchema = new mongoose.Schema<InstructorType>(
       type: String,
       enum: ["instructor", "admin"],
     },
+    password: {
+        type: String,
+        required: true,
+        minLength: 6,
+      },
     courses: [{ type: mongoose.Types.ObjectId, ref: "Course" }],
   },
   { timestamps: true }
