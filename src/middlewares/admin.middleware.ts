@@ -1,0 +1,34 @@
+import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
+
+function authenticateAdmin(req: Request, res: Response, next: NextFunction) {
+  const token = req.cookies.token;
+  if(!token) {
+    return res.status(401).json({
+        success: false,
+        error:"Unauthenicated request",
+        isAuthenticated: false
+    });
+};
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET_KEY!, (err:any, user:any) => {
+    console.log(err);
+
+    if (err) return res.status(403).json({
+        success: false,
+        error:"Invalid token",
+        isAuthenticated: false
+    })
+
+    req.user = user;
+
+    console.log(req.user.role);
+    
+    if (req.user?.role !== "admin") {
+      return res.send("not authenticated");
+    }
+    next();
+  });
+}
+
+export default authenticateAdmin;
